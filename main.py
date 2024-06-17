@@ -109,19 +109,16 @@ class Course:
         self.x = f'Course: {self.course_name}\nProfessor: {self.professor.name}'
         return self.x
 
-
-
-
 def main() -> None:
     import csv
     import tools
 
-    with open('students.csv','r') as f:
+    with open('src/students.csv','r') as f:
         student = csv.DictReader(f)
         for s in student:
             container['students'].append({'student': Student(s['name'], int(s['age']), int(s['id']))})
     
-    with open('professors.csv','r') as f:
+    with open('src/professors.csv','r') as f:
         professor = csv.DictReader(f)
         for p in professor:
            container['professors'].append({'professor':Professor(str(p['name']), int(p['age']), int(p['employee_id']),str(p['department']))})
