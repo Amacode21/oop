@@ -5,7 +5,6 @@ class Person():
 
     def __str__(self):
         return f'Hi! my name is {self.name} and i am {self.age} years old!'
-
 class Student(Person):
     def __init__(self, name:str, age:int, student_id:int) -> None:
         super().__init__(name, age)
@@ -13,14 +12,13 @@ class Student(Person):
         self.courses = set()
 
     def enroll_course(self, course_name:str) -> None:
-        self.courses.add(course_name)
-        
+        self.courses.add(course_name)  
 
     def drop_course(self, course_name:str) -> None:
         if course_name in self.courses:
             self.courses.remove(course_name)
-            return
-        print('Course cant find')      
+        else:
+            print('Course cant find')      
 
     def get_details(self):
         print(f'Name: {self.name}')
@@ -40,24 +38,30 @@ class Professor(Person):
         self.department = department
 
     def assign_grade(self, student_id:int, course_name:'Course', grade: str) -> None:
+        is_exist = False
         for student in course_name.students_enrolled:
+            is_found = False
+            if is_found:
+                break     
             if(student['student_id'] == student_id):
                 student['grade'] = grade
-                return
+                is_found = is_exist = True
+        print(f'Student not found' if is_exist is not True else 'Grade assigned')
+
 class Course:
     def __init__(self, course_name:str, professor: Professor) -> None:
         self.course_name = course_name
         self.professor = professor
         self.students_enrolled = []
     
-    def display_students(self) -> None:
+    def show_students_enrolled(self) -> None:
         print(f'---{self.course_name}---')
         print('List of Students Enrolled')
         print('------------------------')
         for student in self.students_enrolled:
             for k, v in student.items():
                 print(f'{k}: {v}', end=' ')
-            print('\n------------------------')
+            print('')
 
     def enroll_student(self, student_id:int) -> None:
         for students in self.students_enrolled:
@@ -78,6 +82,7 @@ class Course:
                 self.students_enrolled.pop(index)
                 print('Student removed')
                 return
+        print('Student did not exist')
 
     def __str__(self) -> str:
         self.x = f'Course: {self.course_name}\nProfessor: {self.professor.name}'
@@ -85,22 +90,24 @@ class Course:
 
         
 def main() -> None:
-    student_1 = Student('Jose Dalanon',21,1)
-    student_2 = Student('Maria Magalang',21,2)
-    professor_1 = Professor('James William', 31, 1, 'CIT')
-    professor_2 = Professor('Mike James', 45, 2, 'CIT')
-    course_1 = Course('Intro to Web Development', professor_1)
-    course_2 = Course('Introduction to Python', professor_2)
+    import csv
 
-    course_1.enroll_student(student_1.student_id)
-    student_1.enroll_course(course_1.course_name)
+    container = {
+        'students': [],
+        'professors': [],
+        'courses': []
+    }
 
-    course_1.enroll_student(student_2.student_id)
-    student_2.enroll_course(course_1.course_name)
+    with open('students.csv',newline='') as f:
+        student = csv.DictReader(f)
+        for s in student:
+            name = s['name']
+            record = Student(s['name'], int(s['age']), int(s['id']))
+            container['students'].append({'name':name,'record': record})
+
+    for student in container['students']:
+        print(f'{student['record'].student_id}. {student['name']}')
     
-    professor_1.assign_grade(1,course_1,'A')
-    professor_1.assign_grade(5,course_1,'B')
-    course_1.display_students()
 
 if __name__ == "__main__":
     main()
