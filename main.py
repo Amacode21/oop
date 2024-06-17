@@ -1,3 +1,8 @@
+container = {
+    'students': [],
+    'professors': [],
+    'courses': []
+}
 class Person():
     def __init__(self, name:str, age:int) -> None:
         self.name = name
@@ -31,6 +36,14 @@ class Student(Person):
             return
         for _, course in enumerate(self.courses, 1):
             print(f'{_}. {course}')
+
+    def __str__(self) -> None:
+        name:str = f'Name: {self.name}'
+        age:str = f'Age: {self.age} yrs old'
+        id:str = f'Student_ID: {self.student_id}'
+
+        return f'{id}\n{name}\n{age}'
+
 class Professor(Person):
     def __init__(self, name:str, age:int, employee_id:int, department:str) -> None:
         super().__init__(name, age)
@@ -47,6 +60,14 @@ class Professor(Person):
                 student['grade'] = grade
                 is_found = is_exist = True
         print(f'Student not found' if is_exist is not True else 'Grade assigned')
+
+    def __str__(self):
+        name:str = f'Name: {self.name}'
+        age:str = f'Age: {self.age} yrs old'
+        id:str = f'Employee_ID: {self.employee_id}'
+        department:str = f'Department: {self.department}'
+
+        return f'{id}\n{name}\n{age}\n{department}'
 
 class Course:
     def __init__(self, course_name:str, professor: Professor) -> None:
@@ -88,25 +109,25 @@ class Course:
         self.x = f'Course: {self.course_name}\nProfessor: {self.professor.name}'
         return self.x
 
-        
+
+
+
 def main() -> None:
     import csv
+    import tools
 
-    container = {
-        'students': [],
-        'professors': [],
-        'courses': []
-    }
-
-    with open('students.csv',newline='') as f:
+    with open('students.csv','r') as f:
         student = csv.DictReader(f)
         for s in student:
-            name = s['name']
-            record = Student(s['name'], int(s['age']), int(s['id']))
-            container['students'].append({'name':name,'record': record})
+            container['students'].append({'student': Student(s['name'], int(s['age']), int(s['id']))})
+    
+    with open('professors.csv','r') as f:
+        professor = csv.DictReader(f)
+        for p in professor:
+           container['professors'].append({'professor':Professor(str(p['name']), int(p['age']), int(p['employee_id']),str(p['department']))})
 
-    for student in container['students']:
-        print(f'{student['record'].student_id}. {student['name']}')
+    tools.show_datas(container,'students')
+    tools.show_datas(container,'professors')
     
 
 if __name__ == "__main__":
